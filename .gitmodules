@@ -1,0 +1,21 @@
+[submodule "themes/hextra"]
+	path = themes/hextra
+	url = https://github.com/imfing/hextra.git
+[submodule "themes/hugo-narrow"]
+	path = themes/hugo-narrow
+	url = https://github.com/tom2almighty/hugo-narrow.git
+[submodule "themes/hugo-book"]
+	path = themes/hugo-book
+	url = https://github.com/alex-shpak/hugo-book
+[submodule "themes/hugo-coder"]
+	path = themes/hugo-coder
+	url = https://github.com/luizdepra/hugo-coder.git
+[submodule "themes/github-style"]
+	path = themes/github-style
+	url = git@github.com:MeiK2333/github-style.git
+[submodule "themes/hextra-starter-template"]
+	path = themes/hextra-starter-template
+	url = https://github.com/imfing/hextra-starter-template.git
+[submodule "themes/terminal"]
+	path = themes/terminal
+	url = https://github.com/panr/hugo-theme-terminal.git

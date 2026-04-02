@@ -1,0 +1,85 @@
+baseURL = "http://localhost/"
+title = "Benjamin Italiaander"
+theme = "hugo-coder"
+languageCode = "en"
+defaultContentLanguage = "en"
+disablePathToLower = true
+
+[menu]
+  [[menu.main]]
+    name = "Home"
+    pageRef = "/"
+    weight = 1
+
+  [[menu.main]]
+    name = "Books"
+    pageRef = "/books"
+    weight = 20
+
+  [[menu.main]]
+    name = "Yubikey cli"
+    pageRef = "/Linux/yubikey"
+    weight = 30
+
+  [[menu.main]]
+    name = "Linux"
+    pageRef = "/linux"
+    weight = 31
+
+  [[menu.main]]
+    name = "Art I Enjoy"
+    pageRef = "/art_i_enjoy"
+    weight = 40
+
+
+[pagination]
+pagerSize = 20
+
+[services]
+[services.disqus]
+shortname = "Benjamin"
+
+[markup.highlight]
+style = "github-dark"
+
+[params]
+  author = "Benjamin Italiaander"
+  info = "A Linux fanatic with a lot of hobby's"
+  description = "Benjamin's personal website"
+  keywords = "python, keras, Bash, kitty, kitten"
+  avatarurl = "avatar.png"
+  #gravatar = "you@example.com"
+
+  faviconSVG = "/img/favicon.svg"
+  favicon_32 = "/img/favicon-32x32.png"
+  favicon_16 = "/img/favicon-16x16.png"
+
+  since = 2016
+
+  enableTwemoji = true
+
+  colorScheme = "auto"
+  hidecolorschemetoggle = false
+
+  # customCSS = ["css/custom.css"]
+  # customSCSS = ["scss/custom.scss"]
+  # customJS = ["js/custom.js"]
+
+[taxonomies]
+  category = "categories"
+  series = "series"
+  tag = "tags"
+  author = "authors"
+
+# Social links
+[[params.social]]
+  name = "Github"
+  icon = "fa-brands fa-github fa-2x"
+  weight = 1
+  url = "https://github.com/Benjamin-Italiaander"
+[[params.social]]
+  name = "Gitlab"
+  icon = "fa-brands fa-gitlab fa-2x"
+  weight = 2
+  url = "https://gitlab.com/italiaander"
+

@@ -1,0 +1,18 @@
+
+
+{{- $u := .Destination -}}
+
+{{/* Fix common mistake: "file.md/" */}}
+{{- if strings.HasSuffix $u ".md/" -}}
+  {{- $u = strings.TrimSuffix "/" $u -}}
+{{- end -}}
+
+{{/* Rewrite file.md -> file/ */}}
+{{- if strings.HasSuffix $u ".md" -}}
+  {{- $u = strings.TrimSuffix ".md" $u -}}
+  {{- if not (strings.HasSuffix $u "/") -}}
+    {{- $u = printf "%s/" $u -}}
+  {{- end -}}
+{{- end -}}
+
+<a href="{{ $u | safeURL }}"{{ with .Title }} title="{{ . }}"{{ end }}>{{ .Text | safeHTML }}</a>
