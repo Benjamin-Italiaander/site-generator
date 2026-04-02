@@ -28,7 +28,7 @@ disablePathToLower = true
 
   [[menu.main]]
     name = "Art I Enjoy"
-    pageRef = "/art_i_enjoy"
+    pageRef = "/slices_of_life/art_i_enjoy"
     weight = 40
 
 
