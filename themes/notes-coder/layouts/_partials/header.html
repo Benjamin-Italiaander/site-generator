@@ -1,0 +1,38 @@
+{{- /*
+  Top menu generated from the top-level folders of My_Notes.
+  Each topic gets a dropdown with its subfolders. Extra items can still be
+  added with [[menu.main]] in hugo.toml; they are appended at the end.
+*/ -}}
+<nav class="navigation">
+  <section class="container">
+    <a class="navigation-title" href="{{ "" | relLangURL }}">{{ site.Title }}</a>
+    <input type="checkbox" id="menu-toggle" />
+    <label class="menu-button float-right" for="menu-toggle">
+      <i class="fa-solid fa-bars fa-fw" aria-hidden="true"></i>
+    </label>
+    <ul class="navigation-list">
+      {{- $current := . }}
+      {{- range sort site.Home.Sections "LinkTitle" }}
+      {{- if ne .Section "site-index" }}
+      {{- $active := or (eq $current .) ($current.IsDescendant .) }}
+      <li class="navigation-item nb-topic{{ if $active }} nb-active{{ end }}">
+        <a class="navigation-link" href="{{ .RelPermalink }}">{{ .LinkTitle }}</a>
+        {{- with .Sections }}
+        <ul class="nb-dropdown">
+          {{- range sort . "LinkTitle" }}
+          <li><a href="{{ .RelPermalink }}">{{ .LinkTitle }} <span class="nb-count">{{ partial "note-count.html" . }}</span></a></li>
+          {{- end }}
+        </ul>
+        {{- end }}
+      </li>
+      {{- end }}
+      {{- end }}
+      <li class="navigation-item"><a class="navigation-link" href="{{ "site-index/" | relURL }}">Index</a></li>
+      {{- with site.Menus.main }}
+      {{- range sort . }}
+      <li class="navigation-item"><a class="navigation-link" href="{{ .URL | relLangURL }}">{{ .Name }}</a></li>
+      {{- end }}
+      {{- end }}
+    </ul>
+  </section>
+</nav>

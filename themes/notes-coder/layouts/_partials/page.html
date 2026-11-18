@@ -1,0 +1,21 @@
+<section class="container page">
+  <article>
+    <header>
+      {{ partial "breadcrumbs.html" . }}
+      <h1 class="title">
+        <a class="title-link" href="{{ .Permalink | safeURL }}">
+          {{ .Title }}
+        </a>
+      </h1>
+      {{- if not .Date.IsZero }}
+      <p class="nb-meta">{{ .Date | time.Format (site.Params.dateFormat | default "January 2, 2006") }}</p>
+      {{- end }}
+    </header>
+
+    {{ .Content }}
+
+    {{- with .Parent }}
+    <p class="nb-back"><a href="{{ .RelPermalink }}">&larr; Back to {{ if .IsHome }}Home{{ else }}{{ .Title }}{{ end }}</a></p>
+    {{- end }}
+  </article>
+</section>

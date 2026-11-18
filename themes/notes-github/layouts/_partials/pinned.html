@@ -1,0 +1,46 @@
+{{- /* Pinned pages on the home page, configured with [[params.pinned]] in hugo.toml.
+       Each card shows the English title, the Dutch title and links to both. */ -}}
+{{- with site.Params.pinned }}
+<div class="mt-4">
+  <h2 class="f4 mb-2 text-normal">{{ partial "icon.html" "pin" }} Pinned · Uitgelicht</h2>
+  <ol class="d-flex flex-wrap list-style-none gutter-condensed mb-4">
+    {{- range . }}
+    {{- $en := site.GetPage .en }}
+    {{- $nl := site.GetPage .nl }}
+    {{- $main := $en | default $nl }}
+    {{- with $main }}
+    <li class="col-12 col-md-6 col-lg-6 mb-3 d-flex flex-content-stretch">
+      <div class="Box pinned-item-list-item d-flex p-3 width-full">
+        <div class="pinned-item-list-item-content width-full">
+          <div class="d-flex width-full flex-items-center position-relative">
+            <span class="mr-2 text-gray flex-shrink-0">{{ partial "icon.html" (cond .IsPage "file" "repo") }}</span>
+            <a class="text-bold flex-auto min-width-0" href="{{ .RelPermalink }}"><span class="repo">{{ .Title | strings.TrimLeft "0123456789 " }}</span></a>
+          </div>
+          {{- if and $nl (ne $nl $en) (ne $nl.Title .Title) }}
+          <div class="text-gray text-small mt-1"><em>🇳🇱 {{ $nl.Title }}</em></div>
+          {{- end }}
+          {{- with .Params.title_en }}
+          <div class="text-gray text-small mt-1"><em>🇬🇧 {{ . }}</em></div>
+          {{- end }}
+          <p class="pinned-item-desc text-gray text-small d-block mt-2 mb-3">
+            {{- with .Description }}{{ . }}{{ else }}{{ .Summary | plainify | truncate 140 }}{{ end -}}
+            {{- with .Params.description_en }}<br>{{ . }}{{ end -}}
+          </p>
+          <p class="mb-0 f6">
+            {{- if and $en $nl (ne $en $nl) }}
+            <a class="mr-3" href="{{ $en.RelPermalink }}">🇬🇧 English{{ if $en.Params.translated_by_ai }} 🤖{{ end }}</a>
+            <a href="{{ $nl.RelPermalink }}">🇳🇱 Nederlands{{ if $nl.Params.translated_by_ai }} 🤖{{ end }}</a>
+            {{- else }}
+            <a href="{{ .RelPermalink }}">🇬🇧 English &amp; 🇳🇱 Nederlands{{ if .Params.translated_by_ai }} 🤖{{ end }}</a>
+            {{- end }}
+          </p>
+        </div>
+      </div>
+    </li>
+    {{- else }}
+    {{- warnf "pinned page not found: %v / %v" .en .nl }}
+    {{- end }}
+    {{- end }}
+  </ol>
+</div>
+{{- end }}

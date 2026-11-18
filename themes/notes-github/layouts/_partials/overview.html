@@ -1,0 +1,53 @@
+{{ define "overview" }}
+{{- /* Home page: README of My_Notes, the topics as pinned "repositories",
+       and the topics as cards. */ -}}
+<div>
+  <div class="position-relative">
+    {{- with site.Home.Content }}
+    <div class="Box mt-4">
+      <div class="Box-body p-4">
+        <div class="text-mono text-small mb-3">
+          {{ partial "icon.html" "book" }} README<span class="text-gray-light">.md</span>
+        </div>
+        <article class="markdown-body entry-content container-lg f5">{{ . }}</article>
+      </div>
+    </div>
+    {{- end }}
+    {{ partial "pinned.html" . }}
+    <div class="mt-4">
+      <h2 class="f4 mb-2 text-normal">Topics</h2>
+      <ol class="d-flex flex-wrap list-style-none gutter-condensed mb-4">
+        {{- range sort site.Home.Sections "LinkTitle" }}
+        {{- if ne .Section "site-index" }}
+        {{- $n := partial "note-count.html" . }}
+        <li class="col-12 col-md-6 col-lg-6 mb-3 d-flex flex-content-stretch">
+          <div class="Box pinned-item-list-item d-flex p-3 width-full public source">
+            <div class="pinned-item-list-item-content">
+              <div class="d-flex width-full flex-items-center position-relative">
+                <span class="mr-2 text-gray flex-shrink-0">{{ partial "icon.html" "repo" }}</span>
+                <a class="text-bold flex-auto min-width-0" href="{{ .RelPermalink }}"><span class="repo">{{ .LinkTitle }}</span></a>
+              </div>
+              <p class="pinned-item-desc text-gray text-small d-block mt-2 mb-3">
+                {{- with .Description }}{{ . }}{{ else }}{{ .Summary | plainify | truncate 140 }}{{ end -}}
+              </p>
+              <p class="mb-0 f6 text-gray">
+                {{- range first 4 (sort .Sections "LinkTitle") }}
+                <a class="pinned-item-meta muted-link mr-2" href="{{ .RelPermalink }}">{{ partial "icon.html" "folder" }} {{ .LinkTitle }}</a>
+                {{- end }}
+                <span class="pinned-item-meta">{{ $n }} note{{ if ne $n 1 }}s{{ end }}</span>
+              </p>
+            </div>
+          </div>
+        </li>
+        {{- end }}
+        {{- end }}
+      </ol>
+    </div>
+
+    <div id="pinned-items-modal-wrapper"></div>
+
+  </div>
+</div>
+
+
+{{ end }}

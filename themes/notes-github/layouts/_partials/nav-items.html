@@ -1,0 +1,18 @@
+{{- /* Tabs: Overview, one per top-level folder of My_Notes, and Index. */ -}}
+{{- $current := . }}
+<a class="UnderlineNav-item{{ if .IsHome }} selected{{ end }}" href="{{ "" | relURL }}">
+  {{ partial "icon.html" "book" }} Overview
+</a>
+{{- range sort site.Home.Sections "LinkTitle" }}
+{{- if ne .Section "site-index" }}
+<a class="UnderlineNav-item{{ if or (eq $current .) ($current.IsDescendant .) }} selected{{ end }}" href="{{ .RelPermalink }}">
+  {{ partial "icon.html" "repo" }} {{ .LinkTitle }}
+  <span class="Counter">{{ partial "note-count.html" . }}</span>
+</a>
+{{- end }}
+{{- end }}
+{{- with site.GetPage "/site-index" }}
+<a class="UnderlineNav-item{{ if eq $current . }} selected{{ end }}" href="{{ .RelPermalink }}">
+  {{ partial "icon.html" "list" }} Index
+</a>
+{{- end }}

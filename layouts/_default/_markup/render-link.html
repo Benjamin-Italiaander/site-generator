@@ -1,18 +1,39 @@
-
-
-{{- $u := .Destination -}}
-
-{{/* Fix common mistake: "file.md/" */}}
-{{- if strings.HasSuffix $u ".md/" -}}
-  {{- $u = strings.TrimSuffix "/" $u -}}
-{{- end -}}
-
-{{/* Rewrite file.md -> file/ */}}
-{{- if strings.HasSuffix $u ".md" -}}
-  {{- $u = strings.TrimSuffix ".md" $u -}}
-  {{- if not (strings.HasSuffix $u "/") -}}
-    {{- $u = printf "%s/" $u -}}
+{{- /*
+  Makes links written for GitHub/My_Notes work on the Hugo site:
+    other_note.md            -> URL of that page
+    ../Linux/README.md#x     -> URL of the Linux section + #x
+    file.pdf / page.html     -> /<folder of this note>/file.pdf (static_notes)
+  Absolute URLs, mailto:, #anchors and /absolute paths are left alone.
+*/ -}}
+{{- $dest := .Destination -}}
+{{- $u := $dest -}}
+{{- $scheme := findRE `^(?i)([a-z][a-z0-9+.-]*:|//)` $dest -}}
+{{- $web := findRE `^(?i)(https?:)?//` $dest -}}
+{{- if and $dest (not $scheme) (not (hasPrefix $dest "#")) (not (hasPrefix $dest "/")) -}}
+  {{- $parts := split $dest "#" -}}
+  {{- $path := strings.TrimSuffix "/" (index $parts 0) -}}
+  {{- $frag := "" -}}
+  {{- if gt (len $parts) 1 -}}{{- $frag = printf "#%s" (index $parts 1) -}}{{- end -}}
+  {{- $dir := "" -}}
+  {{- with .Page.File -}}{{- $dir = replace .Dir "\\" "/" -}}{{- end -}}
+  {{- with .Page.Params.sourceDir -}}{{- $dir = . -}}{{- end -}}{{- /* page was moved by fill_site.sh */ -}}
+  {{- $full := path.Join "/" $dir $path -}}
+  {{- if findRE `(?i)\.md$` $full -}}
+    {{- $logical := replaceRE `(?i)(/readme)?\.md$` "" $full -}}
+    {{- $target := site.GetPage (cond (eq $logical "") "/" $logical) -}}
+    {{- if not $target -}}
+      {{- /* the page was merged/moved by fill_site.sh: find it by its original path */ -}}
+      {{- range where site.Pages "Params.sourcePath" $logical }}{{ $target = . }}{{ end -}}
+    {{- end -}}
+    {{- with $target -}}
+      {{- $u = printf "%s%s" .RelPermalink $frag -}}
+    {{- else -}}
+      {{- warnf "%s: broken link %q" $.Page.File.Path $dest -}}
+      {{- $u = printf "%s/%s" (strings.TrimPrefix "/" $logical | relURL) $frag -}}
+    {{- end -}}
+  {{- else -}}
+    {{- $u = printf "%s%s" (strings.TrimPrefix "/" $full | relURL) $frag -}}
   {{- end -}}
 {{- end -}}
-
-<a href="{{ $u | safeURL }}"{{ with .Title }} title="{{ . }}"{{ end }}>{{ .Text | safeHTML }}</a>
+<a href="{{ $u | safeURL }}"{{ with .Title }} title="{{ . }}"{{ end }}{{ if $web }} class="external-link" target="_blank" rel="noopener"{{ end }}>{{ .Text | safeHTML }}</a>
+{{- /* trim */ -}}

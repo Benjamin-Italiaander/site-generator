@@ -1,0 +1,15 @@
+{{- /* Desktop tab bar. On the home page it leaves room for the profile sidebar. */ -}}
+<div class="mt-4 position-sticky top-0 d-none d-md-block bg-white width-full border-bottom color-border-secondary" style="z-index:3;">
+  <div class="container-xl px-3 px-md-4 px-lg-5">
+    <div class="gutter-condensed gutter-lg flex-column flex-md-row d-flex">
+      {{- if .IsHome }}<div class="flex-shrink-0 col-12 col-md-3 mb-4 mb-md-0"></div>{{ end }}
+      <div class="flex-shrink-0 col-12 {{ if .IsHome }}col-md-9{{ end }} mb-4 mb-md-0">
+        <div class="UnderlineNav width-full box-shadow-none">
+          <nav class="UnderlineNav-body nb-tabs">
+            {{ partial "nav-items.html" . }}
+          </nav>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

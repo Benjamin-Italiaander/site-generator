@@ -1,0 +1,9 @@
+{{- /* Number of notes in a folder, counting folders whose single note was
+       merged into the folder page (collapsed: true) as one note each. */ -}}
+{{- $sec := . }}
+{{- /* AI translations don't count as separate notes */ -}}
+{{- $n := len (where .RegularPagesRecursive "Params.translated_by_ai" "!=" true) }}
+{{- range where site.Pages "Params.collapsed" true }}
+  {{- if or (eq . $sec) (.IsDescendant $sec) }}{{ $n = add $n 1 }}{{ end }}
+{{- end }}
+{{- return $n }}

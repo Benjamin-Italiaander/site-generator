@@ -1,0 +1,13 @@
+{{- /*
+  Relative image paths in My_Notes (img/x.png, ./../../img/x.png) are resolved
+  against the note's own folder, pointing at the copy in static_notes/.
+*/ -}}
+{{- $src := .Destination -}}
+{{- if and $src (not (findRE `^(?i)([a-z][a-z0-9+.-]*:|//|/)` $src)) -}}
+  {{- $dir := "" -}}
+  {{- with .Page.File -}}{{- $dir = replace .Dir "\\" "/" -}}{{- end -}}
+  {{- with .Page.Params.sourceDir -}}{{- $dir = . -}}{{- end -}}{{- /* page was moved by fill_site.sh */ -}}
+  {{- $src = path.Join "/" $dir $src | strings.TrimPrefix "/" | relURL -}}
+{{- end -}}
+<img src="{{ $src | safeURL }}" alt="{{ .PlainText }}"{{ with .Title }} title="{{ . }}"{{ end }} loading="lazy">
+{{- /* trim */ -}}

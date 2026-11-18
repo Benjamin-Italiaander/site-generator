@@ -1,0 +1,11 @@
+{{- /* GitHub-style path header:  Author / Linux / yubikey / Note title */ -}}
+<h1 class="nb-path break-word f3 text-normal mb-2">
+  {{ partial "icon.html" (cond .IsPage "file" "repo") }}
+  <a href="{{ "" | relURL }}">{{ site.Params.author }}</a>
+  {{- range .Ancestors.Reverse }}{{ if not .IsHome }}
+  <span class="path-divider">/</span>
+  <a href="{{ .RelPermalink }}">{{ .LinkTitle }}</a>
+  {{- end }}{{ end }}
+  <span class="path-divider">/</span>
+  <strong><a href="{{ .RelPermalink }}">{{ if .IsPage }}{{ .Title }}{{ else }}{{ .LinkTitle }}{{ end }}</a></strong>
+</h1>

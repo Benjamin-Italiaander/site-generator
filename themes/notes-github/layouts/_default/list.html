@@ -1,0 +1,82 @@
+{{- /*
+  Folder pages look like a GitHub repository: a path header, a file list
+  (folders first, then notes) and the folder's README rendered below.
+  A folder whose single note was merged in (collapsed) shows that note.
+*/ -}}
+{{ define "content" }}
+<div class="application-main">
+  {{ partial "menus.html" . }}
+  <div class="container-xl px-3 px-md-4 px-lg-5 mt-4">
+    {{ partial "mobile-menus.html" . }}
+    {{ partial "repo-path.html" . }}
+    {{- with .Description }}<p class="f5 text-gray mb-3">{{ . }}</p>{{ end }}
+
+    {{- $pages := .RegularPages }}
+    {{- if eq .Kind "term" "taxonomy" }}{{ $pages = .Pages }}{{ end }}
+    {{- /* Each note is listed once. Its AI translation (front matter
+           translated_by_ai + original: "<file>") is shown as a flag link on
+           the same row; a translated folder README gets a link in the header. */ -}}
+    {{- $names := slice }}
+    {{- range $pages }}{{ with .File }}{{ $names = $names | append (lower .LogicalName) }}{{ end }}{{ end }}
+    {{- $shown := slice }}{{ $readmeTr := slice }}
+    {{- range $pages }}
+      {{- $orig := lower (.Params.original | default "") }}
+      {{- if and .Params.translated_by_ai (eq $orig "readme.md") }}{{ $readmeTr = $readmeTr | append . }}
+      {{- else if and .Params.translated_by_ai (in $names $orig) }}
+      {{- else }}{{ $shown = $shown | append . }}{{ end }}
+    {{- end }}
+    {{- if or .Sections $shown }}
+    <div class="Box mb-4 nb-files">
+      <div class="Box-header py-2 d-flex flex-items-center">
+        <span class="text-gray f6">
+          {{- with .Sections }}{{ len . }} folder{{ if ne (len .) 1 }}s{{ end }}{{ end }}
+          {{- if and .Sections $shown }} · {{ end }}
+          {{- with $shown }}{{ len . }} note{{ if ne (len .) 1 }}s{{ end }}{{ end -}}
+        </span>
+      </div>
+      {{- with .Parent }}
+      <div class="Box-row py-2 d-flex flex-items-center">
+        <span class="mr-3 text-gray">{{ partial "icon.html" "up" }}</span>
+        <a class="flex-auto" href="{{ .RelPermalink }}">..</a>
+      </div>
+      {{- end }}
+      {{- range sort .Sections "LinkTitle" }}
+      {{- $n := partial "note-count.html" . }}
+      <div class="Box-row py-2 d-flex flex-items-center">
+        <span class="mr-3 nb-icon-folder">{{ partial "icon.html" "folder" }}</span>
+        <a class="nb-name flex-shrink-0 mr-3" href="{{ .RelPermalink }}">{{ .LinkTitle }}</a>
+        <span class="text-gray f6 nb-desc">{{ .Description }}</span>
+        <span class="text-gray f6 no-wrap ml-3">{{ if $n }}{{ $n }} note{{ if ne $n 1 }}s{{ end }}{{ end }}</span>
+      </div>
+      {{- end }}
+      {{- range sort $shown "Title" }}
+      {{- $me := "" }}{{ with .File }}{{ $me = lower .LogicalName }}{{ end }}
+      <div class="Box-row py-2 d-flex flex-items-center">
+        <span class="mr-3 text-gray">{{ partial "icon.html" "file" }}</span>
+        <a class="nb-name flex-shrink-0 mr-3" href="{{ .RelPermalink }}">{{ .Title }}</a>
+        <span class="text-gray f6 nb-desc">{{ .Description }}</span>
+        {{- range $pages }}{{ if and .Params.translated_by_ai (eq (lower (.Params.original | default "")) $me) }}
+        <a class="f6 ml-3 nb-lang" href="{{ .RelPermalink }}" title="{{ .Title }}">{{ if eq .Params.translated_from "en" }}🇳🇱 NL{{ else }}🇬🇧 EN{{ end }}</a>
+        {{- end }}{{ end }}
+        {{- if not .Date.IsZero }}<span class="text-gray f6 no-wrap ml-3">{{ .Date | time.Format "Jan 2, 2006" }}</span>{{ end }}
+      </div>
+      {{- end }}
+    </div>
+    {{- end }}
+
+    {{- if trim (string .Content) " \n" }}
+    <div class="Box mb-4" id="readme">
+      <div class="Box-header py-2 d-flex flex-items-center">
+        <span class="text-mono f6 flex-auto">
+          {{- if .Params.collapsed }}{{ partial "icon.html" "file" }} {{ .Title }}{{ else }}{{ partial "icon.html" "book" }} README.md{{ end -}}
+        </span>
+        {{- if and .Params.collapsed (not .Date.IsZero) }}<span class="text-gray f6">{{ .Date | time.Format "Jan 2, 2006" }}</span>{{ end }}
+      </div>
+      <div class="Box-body px-4 px-md-5 pb-5">
+        <article class="markdown-body entry-content container-lg">{{ .Content }}</article>
+      </div>
+    </div>
+    {{- end }}
+  </div>
+</div>
+{{ end }}
