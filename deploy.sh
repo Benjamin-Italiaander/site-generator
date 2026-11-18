@@ -29,6 +29,10 @@ echo "Building site..."
 rm -rf -- ./public
 hugo --minify --destination public
 touch public/.nojekyll                  # serve files as-is, no Jekyll processing
+# GitHub Pages for tlnd-org is published by this Actions workflow; without it
+# the push lands in the repo but the live site never updates.
+mkdir -p public/.github/workflows
+cp deploy/pages-workflow.yml public/.github/workflows/static.yml
 [ -f public/CNAME ] || { echo "public/CNAME is missing (static/CNAME)" >&2; exit 1; }
 echo "Built $(find public -name index.html | wc -l) pages ($(du -sh public | cut -f1))."
 
